@@ -45,11 +45,9 @@ func NewPodConfigMap(podname string, imagename string, portsmap []string, mounts
 }
 func ReadNodeRegister(message *Message) NodeRegisterInfo {
 	configMap := message.GetContent()
-	//log.Println(configMap)
 	jsonString, _ := json.Marshal(configMap)
 	res := NodeRegisterInfo{}
 	json.Unmarshal(jsonString, &res)
-	//log.Println(res)
 	return res
 }
 

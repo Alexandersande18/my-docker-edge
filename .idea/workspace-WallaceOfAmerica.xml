@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e0bcc73a-88cc-42cc-9933-20ab39850168" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="HTML File" />
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file://H:/go" />
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1nQ2pwpUh65aJwq8hv5MEqtiqb1" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="configurable..is.expanded" value="true" />
+    <property name="configurable.GoLibrariesConfigurable.is.expanded" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="go.vendoring.notification.had.been.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="node.js.detected.package.stylelint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.stylelint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.stylelint" value="" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="go.vgo" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Alex Zhang\OneDrive\SchoolWork\dissertation\test-src\dockerapigo\src" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Alex Zhang\OneDrive\SchoolWork\dissertation\test-src\dockerapigo\src" />
+      <recent name="C:\Users\Alex Zhang\OneDrive\SchoolWork\dissertation\test-src\dockerapigo\src\edge\edged" />
+      <recent name="C:\Users\Alex Zhang\OneDrive\SchoolWork\dissertation\test-src\dockerapigo\src\common\message" />
+      <recent name="C:\Users\Alex Zhang\OneDrive\SchoolWork\dissertation\test-src\dockerapigo\src\cloud\cloudhub" />
+      <recent name="C:\Users\Alex Zhang\OneDrive\SchoolWork\dissertation\test-src\dockerapigo\src\edge\edgehub" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Go Test.TestName in dockerapigo/src/edge/edgecontroller (2)">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="dockerapigo" />
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <kind value="DIRECTORY" />
+      <filePath value="$PROJECT_DIR$" />
+      <package value="dockerapigo" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build dockerapigo/src" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="dockerapigo" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/src/main.go" />
+      <package value="dockerapigo/src" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestCli in dockerapigo/src/cloud/clitool" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="dockerapigo" />
+      <working_directory value="$PROJECT_DIR$/src/cloud/clitool" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="dockerapigo/src/cloud/clitool" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestCli\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestHub in dockerapigo/src/cloud/cloudhub (2)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="dockerapigo" />
+      <working_directory value="$PROJECT_DIR$/src/cloud/cloudhub" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="dockerapigo/src/cloud/cloudhub" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestHub\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestJson in dockerapigo/src/cloud/clitool" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="dockerapigo" />
+      <working_directory value="$PROJECT_DIR$/src/cloud/clitool" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="dockerapigo/src/cloud/clitool" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestJson\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestName in dockerapigo/src/edge/edgecontroller (2)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="dockerapigo" />
+      <working_directory value="$PROJECT_DIR$/src/edge/edgecontroller" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="dockerapigo/src/edge/edgecontroller" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestName\E$" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Build.go build dockerapigo/src" />
+      <item itemvalue="Go Test.TestHub in dockerapigo/src/cloud/cloudhub (2)" />
+      <item itemvalue="Go Test.TestName in dockerapigo/src/edge/edgecontroller (2)" />
+      <item itemvalue="Go Test.TestJson in dockerapigo/src/cloud/clitool" />
+      <item itemvalue="Go Test.TestCli in dockerapigo/src/cloud/clitool" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.TestName in dockerapigo/src/edge/edgecontroller (2)" />
+        <item itemvalue="Go Test.TestHub in dockerapigo/src/cloud/cloudhub (2)" />
+        <item itemvalue="Go Build.go build dockerapigo/src" />
+        <item itemvalue="Go Test.TestCli in dockerapigo/src/cloud/clitool" />
+        <item itemvalue="Go Test.TestJson in dockerapigo/src/cloud/clitool" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e0bcc73a-88cc-42cc-9933-20ab39850168" name="Default Changelist" comment="" />
+      <created>1611308183462</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1611308183462</updated>
+      <workItem from="1611308185405" duration="636000" />
+      <workItem from="1611716487078" duration="1430000" />
+      <workItem from="1611718523422" duration="14247000" />
+      <workItem from="1611805126936" duration="711000" />
+      <workItem from="1611805866085" duration="262000" />
+      <workItem from="1611806147874" duration="268000" />
+      <workItem from="1611806437675" duration="140000" />
+      <workItem from="1611806595312" duration="149000" />
+      <workItem from="1611806761676" duration="12219000" />
+      <workItem from="1611888948122" duration="2032000" />
+      <workItem from="1612351521185" duration="4934000" />
+      <workItem from="1612495938187" duration="2909000" />
+      <workItem from="1612519118918" duration="2465000" />
+      <workItem from="1612591038368" duration="2877000" />
+      <workItem from="1612667621226" duration="12602000" />
+      <workItem from="1612755698218" duration="8913000" />
+      <workItem from="1612843619667" duration="14406000" />
+      <workItem from="1613528650607" duration="5743000" />
+      <workItem from="1613615645645" duration="14652000" />
+      <workItem from="1613701823801" duration="852000" />
+      <workItem from="1613710452085" duration="13662000" />
+      <workItem from="1613873475539" duration="2036000" />
+      <workItem from="1614263126852" duration="1053000" />
+      <workItem from="1614502576986" duration="2699000" />
+      <workItem from="1614576089748" duration="11941000" />
+      <workItem from="1614652716666" duration="8853000" />
+      <workItem from="1614736685881" duration="8076000" />
+      <workItem from="1614751127831" duration="9490000" />
+      <workItem from="1614775893528" duration="6331000" />
+      <workItem from="1614825043977" duration="10210000" />
+      <workItem from="1614921683039" duration="958000" />
+      <workItem from="1614954288860" duration="1504000" />
+      <workItem from="1614999430894" duration="10415000" />
+      <workItem from="1615041488503" duration="1289000" />
+      <workItem from="1615086215505" duration="12174000" />
+      <workItem from="1615117556489" duration="4195000" />
+      <workItem from="1615168958579" duration="6266000" />
+      <workItem from="1615181959446" duration="1128000" />
+      <workItem from="1615183132280" duration="14056000" />
+      <workItem from="1615269494919" duration="5986000" />
+      <workItem from="1615280280873" duration="377000" />
+      <workItem from="1615280825961" duration="1944000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand>
+      <path>
+        <item name="dockerapigo" type="b2602c69:ProjectViewProjectNode" />
+        <item name="dockerapigo" type="462c0819:PsiDirectoryNode" />
+      </path>
+    </expand>
+    <select />
+  </component>
+</project>

@@ -1,0 +1,38 @@
+{
+  "pods" :[
+    {
+      "node": "n01",
+      "pod_name": "mongodb",
+      "image_name": "mongo",
+      "ports_map": [
+        "27017:27017"
+      ],
+      "env": [
+        "MONGO_INITDB_ROOT_USERNAME=root",
+        "MONGO_INITDB_ROOT_PASSWORD=123"
+      ]
+    },
+    {
+      "node": "n01",
+      "pod_name": "mongo-express",
+      "image_name": "mongo-express",
+      "ports_map": [
+        "8081:8081"
+      ],
+      "env": [
+        "ME_CONFIG_MONGODB_ADMINUSERNAME=root",
+        "ME_CONFIG_MONGODB_ADMINPASSWORD=123",
+        "ME_CONFIG_MONGODB_SERVER=mongo"
+      ]
+    }
+  ],
+  "services" : [
+    {
+      "name": "mongo",
+      "node": "n01",
+      "pod": "mongodb",
+      "protocol": "tcp",
+      "port": "27017"
+    }
+  ]
+}

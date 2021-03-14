@@ -6,8 +6,11 @@ import (
 	"dockerapigo/src/common/config"
 	"dockerapigo/src/common/message"
 	"dockerapigo/src/edge/edgehub"
+	"fmt"
 	"github.com/docker/docker/client"
 	"log"
+	"net"
+	"strings"
 	"sync"
 )
 
@@ -16,10 +19,25 @@ type EdgeController struct {
 	ctx       context.Context
 	apiClient *client.Client
 	nodeId    string
+	LocalIP   string
+}
+
+func GetOutBoundIP() (ip string, err error) {
+	conn, err := net.Dial("udp", "114.114.114.114:53")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	ip = strings.Split(localAddr.String(), ":")[0]
+	return
 }
 
 func NewEdgeController(masterIp string, masterPort string, nodeID string, hostApiUrl string, ctx context.Context) *EdgeController {
-	wsclient := edgehub.NewWsClientManager(masterIp, masterPort, "/ws", config.ClientTimeout, nodeID)
+	ip, err := GetOutBoundIP()
+	registerMessage := *message.NewRegisterMessage(nodeID, ip)
+	//log.Println(registerMessage)
+	wsclient := edgehub.NewWsClientManager(masterIp, masterPort, "/ws", config.ClientTimeout, nodeID, registerMessage)
 	apiClient, err := api.NewApiClient(hostApiUrl)
 	if err != nil {
 		log.Println(err)
@@ -29,6 +47,7 @@ func NewEdgeController(masterIp string, masterPort string, nodeID string, hostAp
 		ctx:       ctx,
 		apiClient: apiClient,
 		nodeId:    nodeID,
+		LocalIP:   ip,
 	}
 }
 

@@ -116,7 +116,7 @@ func (h *Hub) registerClient(cli *Client) {
 		Group:   cli.group,
 		Status:  node.NodeStatusAlive,
 	}
-	log.Println("New Client ", cli.id)
+	log.Println("New Client ", cli.id, cli.LocalIP)
 }
 
 func (h *Hub) unregisterClient(cli *Client) {

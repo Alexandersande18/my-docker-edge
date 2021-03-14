@@ -2,6 +2,7 @@
   "pods" :[
     {
       "node": "n01",
+      "group" : "0",
       "pod_name": "mongodb",
       "image_name": "mongo",
       "ports_map": [
@@ -14,6 +15,7 @@
     },
     {
       "node": "n01",
+      "group" : "0",
       "pod_name": "mongo-express",
       "image_name": "mongo-express",
       "ports_map": [
@@ -28,6 +30,7 @@
   ],
   "services" : [
     {
+      "group" : "0",
       "name": "mongo",
       "node": "n01",
       "pod": "mongodb",

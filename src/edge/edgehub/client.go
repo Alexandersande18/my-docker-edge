@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
-	"net"
 	"net/url"
-	"strings"
 	"time"
 )
 
@@ -23,24 +21,12 @@ type WsClient struct {
 	id              string
 }
 
-func GetOutBoundIP() (ip string, err error) {
-	conn, err := net.Dial("udp", "8.8.8.8:53")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	ip = strings.Split(localAddr.String(), ":")[0]
-	return
-}
-
 // 构造函数
-func NewWsClientManager(addrIp, addrPort, path string, timeout int, id string) *WsClient {
+func NewWsClientManager(addrIp, addrPort, path string, timeout int, id string, registerMessage message.Message) *WsClient {
 	addrString := addrIp + ":" + addrPort
 	var sendChan = make(chan message.Message, 10)
 	var recvChan = make(chan message.Message, 10)
 	var conn *websocket.Conn
-	NodeIp, _ := GetOutBoundIP()
 	return &WsClient{
 		addr:            &addrString,
 		path:            path,
@@ -50,7 +36,7 @@ func NewWsClientManager(addrIp, addrPort, path string, timeout int, id string) *
 		isAlive:         false,
 		timeout:         timeout,
 		id:              id,
-		RegisterMessage: *message.NewRegisterMessage(id, NodeIp),
+		RegisterMessage: registerMessage,
 	}
 }
 

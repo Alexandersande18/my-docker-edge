@@ -47,7 +47,7 @@ func (cc *CloudController) CommandHandler(cmd message.Message) {
 	case message.ResourceTypePod:
 		switch resOp {
 		case message.InsertOperation:
-			cc.StartPod(cmd.GetGroup(), cmd.GetTarget(), message.ReadPodConfigMap(&cmd))
+			cc.StartPod(message.ReadPodConfigMap(&cmd))
 		}
 		break
 	case message.ResourceTypeNode:
@@ -76,11 +76,15 @@ func (cc *CloudController) PodStatusQuiry(groupID string, nodeID string, podID s
 	log.Println(message.ReadPodQuiryResponse(&reply))
 }
 
-func (cc *CloudController) StartPod(groupID string, nodeID string, cfg message.PodConfig) {
+func (cc *CloudController) StartPod(cfg message.PodConfig) {
 	msg := message.NewMessage(config.MasterID)
-	msg.BuildRouter(config.MasterID, groupID, nodeID, message.ResourceTypePod, message.InsertOperation)
+	msg.BuildRouter(config.MasterID, cfg.Group, cfg.Node, message.ResourceTypePod, message.InsertOperation)
+	cfg.HostsCfg = cc.GetServiceString()
+	log.Println("Host config:", cfg.HostsCfg)
+	msg.SetSync()
 	msg.FillBody(cfg)
-	cc.hub.SendMessageSync(*msg)
+	reply := cc.hub.SendMessageSync(*msg)
+	log.Println(message.ReadPodCreateResponse(&reply))
 }
 
 func (cc *CloudController) NodeStatusQuiry() {
@@ -93,6 +97,7 @@ func (cc *CloudController) NewService(cfg message.Service) {
 		cfg.LocalIP = ip
 	}
 	cc.Services.Store(cfg.Name, cfg)
+	log.Println("New Service:", cfg)
 }
 
 func (cc *CloudController) GetServiceString() []string {

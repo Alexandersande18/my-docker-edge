@@ -75,7 +75,8 @@ func (c *Client) readPump() {
 		} else {
 			if msg.GetOperation() == message.RegisterOperation {
 				c.id = nid
-				c.LocalIP = message.ReadNodeRegister(msg).NodeIP
+				c.LocalIP = message.ReadNodeRegister(msg).LocalIP
+				//log.Println("register client local ip:", msg)
 				c.group = msg.GetGroup()
 				c.hub.register <- c
 			} else {

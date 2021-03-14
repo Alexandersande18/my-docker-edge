@@ -208,9 +208,13 @@ func (msg *Message) Clone(message *Message) *Message {
 
 // NewRespByMessage returns a new response message by a message received
 func NewRespByMessage(message *Message, content interface{}) *Message {
-	return NewMessage(message.GetID()).SetRoute(message.GetTarget(), message.GetGroup(), message.GetSource()).
+	ret := NewMessage(message.GetID()).SetRoute(message.GetTarget(), message.GetGroup(), message.GetSource()).
 		SetResourceOperation(message.GetResource(), ResponseOperation).
 		FillBody(content)
+	if message.IsSync() {
+		ret.SetSync()
+	}
+	return ret
 }
 
 // NewErrorMessage returns a new error message by a message received

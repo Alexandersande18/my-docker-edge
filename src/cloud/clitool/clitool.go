@@ -27,6 +27,14 @@ func handlePodOptions(cfg message.ConfigFile) {
 	}
 }
 
+func nodeStatus(node string) {
+
+}
+
+func podStatus(pod string) {
+
+}
+
 func RunCli() {
 	cc = cloudcontroller.NewCloudController()
 	go cc.RunController()
@@ -36,11 +44,26 @@ func RunCli() {
 		if err != nil {
 			fmt.Println(err)
 		}
-		if n == 3 {
-			if tag == "-f" {
+		switch command {
+		case "apply":
+			if n == 3 && tag == "-f" {
 				cfg := GetConfig(file)
 				handleServiceOptions(cfg)
 				handlePodOptions(cfg)
+			}
+			break
+		case "status":
+			if tag == "node" {
+				nodeStatus(file)
+			} else if tag == "pod" {
+				podStatus(file)
+			}
+			break
+		case "list":
+			if tag == "node" {
+				nodeStatus(file)
+			} else if tag == "pod" {
+				podStatus(file)
 			}
 		}
 	}

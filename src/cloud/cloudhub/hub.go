@@ -3,7 +3,7 @@ package cloudhub
 import (
 	"dockerapigo/src/common/config"
 	"dockerapigo/src/common/message"
-	"dockerapigo/src/common/node"
+	"dockerapigo/src/common/types"
 	"flag"
 	"log"
 	"net/http"
@@ -23,7 +23,7 @@ type Hub struct {
 	syncMessage     sync.Map
 	// Register requests from the clients.
 	register      chan *Client
-	RegisterToHub chan node.Node
+	RegisterToHub chan types.Node
 	// Unregister requests from clients.
 	unregister chan *Client
 }
@@ -34,7 +34,7 @@ func NewHub() *Hub {
 		messageReceived: make(chan message.Message, 100),
 		AsyncMessage:    make(chan message.Message, 20),
 		register:        make(chan *Client, 10),
-		RegisterToHub:   make(chan node.Node, 10),
+		RegisterToHub:   make(chan types.Node, 10),
 		unregister:      make(chan *Client, 10),
 		clientToId:      make(map[*Client]string),
 		idToClient:      make(map[string]*Client),
@@ -110,11 +110,12 @@ func (h *Hub) registerClient(cli *Client) {
 	}
 	h.clientToId[cli] = cli.id
 	h.idToClient[cli.id] = cli
-	h.RegisterToHub <- node.Node{
+	h.RegisterToHub <- types.Node{
 		NodeID:  cli.id,
 		LocalIP: cli.LocalIP,
 		Group:   cli.group,
-		Status:  node.NodeStatusAlive,
+		Status:  types.NodeStatusAlive,
+		Pods:    make(map[string]*types.Pod),
 	}
 	log.Println("New Client ", cli.id, cli.LocalIP)
 }
@@ -123,11 +124,11 @@ func (h *Hub) unregisterClient(cli *Client) {
 	if _, ok := h.clientToId[cli]; ok {
 		log.Println("Client leaving:", *cli)
 		id := h.clientToId[cli]
-		h.RegisterToHub <- node.Node{
+		h.RegisterToHub <- types.Node{
 			NodeID:  cli.id,
 			LocalIP: cli.LocalIP,
 			Group:   cli.group,
-			Status:  node.NodeStatusDead,
+			Status:  types.NodeStatusDead,
 		}
 		delete(h.clientToId, cli)
 		delete(h.idToClient, id)

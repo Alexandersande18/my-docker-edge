@@ -4,7 +4,7 @@ import (
 	"dockerapigo/src/cloud/cloudhub"
 	"dockerapigo/src/common/config"
 	"dockerapigo/src/common/message"
-	"dockerapigo/src/common/node"
+	"dockerapigo/src/common/types"
 	"log"
 	"sync"
 )
@@ -32,10 +32,27 @@ func (cc *CloudController) AsyncMessageHandler() {
 			cc.CommandHandler(cmd)
 		//Message from nodes
 		case msg := <-cc.hub.AsyncMessage:
-			log.Println(msg)
+			if msg.GetResource() == message.ResourceTypePod && msg.GetOperation() == message.ResponseOperation {
+				log.Println("Pod Query Reply")
+				reply := message.ReadPodQuiryResponse(&msg)
+				no, _ := cc.Nodes.Load(msg.GetSource())
+				node := no.(*types.Node)
+				log.Println(*node)
+				if pod, ok := node.Pods[reply.PodName]; ok {
+					pod.Info = reply
+					log.Println("Pod Info refresh", pod.ToString())
+				}
+			}
+			log.Println("Async Message:", msg)
 		case n := <-cc.hub.RegisterToHub:
-			cc.Nodes.Store(n.NodeID, n)
-			log.Println(n)
+			if old, loaded := cc.Nodes.LoadOrStore(n.NodeID, &n); loaded {
+				// Node Registered before, so set Status
+				node := old.(*types.Node)
+				node.Status = n.Status
+				log.Println("Node", *node, "Status Changed")
+			} else {
+				log.Println("New Node", n)
+			}
 		}
 	}
 }
@@ -70,30 +87,54 @@ func (cc *CloudController) PodStatusQuiry(groupID string, nodeID string, podID s
 	msg.SetSync()
 	reply := cc.hub.SendMessageSync(*msg)
 	if reply.GetOperation() == message.ResponseErrorOperation {
-		log.Println("Error Occur")
+		log.Println("Error Occur", reply.GetContent())
 		return
 	}
 	log.Println(message.ReadPodQuiryResponse(&reply))
 }
 
-func (cc *CloudController) StartPod(cfg message.PodConfig) {
+func (cc *CloudController) AsyncPodStatusQuiry(groupID string, nodeID string, podID string) {
 	msg := message.NewMessage(config.MasterID)
-	msg.BuildRouter(config.MasterID, cfg.Group, cfg.Node, message.ResourceTypePod, message.InsertOperation)
-	cfg.HostsCfg = cc.GetServiceString()
-	log.Println("Host config:", cfg.HostsCfg)
-	msg.SetSync()
-	msg.FillBody(cfg)
-	reply := cc.hub.SendMessageSync(*msg)
-	log.Println(message.ReadPodCreateResponse(&reply))
+	msg.BuildRouter(config.MasterID, groupID, nodeID, message.ResourceTypePod, message.QueryOperation)
+	msg.FillBody(message.PodConfig{PodName: podID})
+	cc.hub.SendMessage(*msg)
 }
 
-func (cc *CloudController) NodeStatusQuiry() {
+func (cc *CloudController) StartPod(cfg message.PodConfig) {
+	if no, nodeExist := cc.Nodes.Load(cfg.Node); nodeExist {
+		node := no.(*types.Node)
+		if _, podExist := node.Pods[cfg.PodName]; podExist {
+			log.Println("Pod", cfg.PodName, "Already exist")
+			return
+		}
+		msg := message.NewMessage(config.MasterID)
+		msg.BuildRouter(config.MasterID, cfg.Group, cfg.Node, message.ResourceTypePod, message.InsertOperation)
+		cfg.HostsCfg = cc.GetServiceString()
+		log.Println("Host config:", cfg.HostsCfg)
+		msg.SetSync()
+		msg.FillBody(cfg)
+		reply := cc.hub.SendMessageSync(*msg)
+		response := message.ReadPodCreateResponse(&reply)
+		log.Println(response)
+		node.Pods[cfg.PodName] = &types.Pod{
+			PodName: cfg.PodName,
+			NodeID:  cfg.Node,
+			Info:    message.PodQuiryResponse{},
+		}
+	}
+}
 
+func (cc *CloudController) NodeStatusQuiry(nodeID string) {
+	if nd, ok := cc.Nodes.Load(nodeID); ok {
+		log.Println(nd.(*types.Node).ToString())
+	} else {
+		log.Println(nodeID + "Does not exist")
+	}
 }
 
 func (cc *CloudController) NewService(cfg message.Service) {
 	if no, ok := cc.Nodes.Load(cfg.Node); ok {
-		ip := no.(node.Node).LocalIP
+		ip := no.(*types.Node).LocalIP
 		cfg.LocalIP = ip
 	}
 	cc.Services.Store(cfg.Name, cfg)

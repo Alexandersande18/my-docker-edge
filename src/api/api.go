@@ -117,6 +117,10 @@ func RunCbyName(ctx context.Context, cli *client.Client, imageName string, conta
 	ConfigEnv(&cfg, envs)
 	ConfigMounts(&hostCfg, mountsMap)
 	ConfigHosts(&hostCfg, extraHost)
+	hostCfg.RestartPolicy = container.RestartPolicy{
+		Name:              "on-failure",
+		MaximumRetryCount: 10,
+	}
 
 	cid, err := runContainer(ctx, cli, &cfg, &hostCfg, nil, containerName)
 	if err != nil {

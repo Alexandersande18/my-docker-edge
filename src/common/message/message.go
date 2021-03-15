@@ -219,9 +219,14 @@ func NewRespByMessage(message *Message, content interface{}) *Message {
 
 // NewErrorMessage returns a new error message by a message received
 func NewErrorMessage(message *Message, errContent string) *Message {
-	return NewMessage(message.Header.ParentID).
+	Err := ErrorResponse{ErrorString: errContent}
+	ret := NewMessage(message.GetID()).SetRoute(message.GetTarget(), message.GetGroup(), message.GetSource()).
 		SetResourceOperation(message.Router.Resource, ResponseErrorOperation).
-		FillBody(errContent)
+		FillBody(Err)
+	if message.IsSync() {
+		ret.SetSync()
+	}
+	return ret
 }
 
 func NewClientOfflineErrMessage(parentID string) *Message {

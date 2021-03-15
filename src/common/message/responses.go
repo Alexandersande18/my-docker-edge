@@ -8,9 +8,14 @@ type PodCreateResponse struct {
 }
 
 type PodQuiryResponse struct {
+	PodName string `json:"pod_name"`
 	Status  string `json:"status"`
 	Image   string `json:"image"`
 	PortMap string `json:"port_map"`
+}
+
+type ErrorResponse struct {
+	ErrorString string
 }
 
 func ReadPodCreateResponse(message *Message) PodCreateResponse {

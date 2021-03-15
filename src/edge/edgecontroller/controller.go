@@ -88,11 +88,13 @@ func (ec *EdgeController) podStatus(msg *message.Message) message.Message {
 	res, err := api.GetContainerStatus(ec.ctx, ec.apiClient, configMap.PodName)
 	if err != nil {
 		log.Println(err)
+		return *message.NewErrorMessage(msg, err.Error())
 	}
 	reply := message.PodQuiryResponse{
 		Status:  res.State.Status,
 		Image:   res.Image,
 		PortMap: api.GetPortMapString(res.HostConfig.PortBindings),
+		PodName: configMap.PodName,
 	}
 	return *message.NewRespByMessage(msg, reply)
 }

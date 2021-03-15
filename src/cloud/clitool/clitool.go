@@ -5,6 +5,8 @@ import (
 	"dockerapigo/src/common/message"
 	"fmt"
 	"log"
+	"strings"
+	"time"
 )
 
 var (
@@ -24,6 +26,7 @@ func handlePodOptions(cfg message.ConfigFile) {
 		log.Println("Starting pod", podcfg)
 		cc.StartPod(podcfg)
 		log.Println("pod start returns")
+		time.Sleep(2 * time.Second)
 	}
 }
 
@@ -32,7 +35,9 @@ func nodeStatus(node string) {
 }
 
 func podStatus(pod string) {
-
+	sep := strings.Split(pod, "-")
+	//cc.PodStatusQuiry(sep[0], sep[1], sep[2])
+	cc.AsyncPodStatusQuiry(sep[0], sep[1], sep[2])
 }
 
 func RunCli() {

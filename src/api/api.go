@@ -44,7 +44,7 @@ func getAllContainers(ctx context.Context, cli *client.Client) []types.Container
 	})
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 	return containers
 }

@@ -90,11 +90,23 @@ func (ec *EdgeController) podStatus(msg *message.Message) message.Message {
 		log.Println(err)
 		return *message.NewErrorMessage(msg, err.Error())
 	}
-	reply := message.PodQuiryResponse{
+	reply := message.PodQueryResponse{
 		Status:  res.State.Status,
 		Image:   res.Image,
 		PortMap: api.GetPortMapString(res.HostConfig.PortBindings),
 		PodName: configMap.PodName,
+	}
+	return *message.NewRespByMessage(msg, reply)
+}
+
+func (ec *EdgeController) podList(msg *message.Message) message.Message {
+	podList := api.MakeNameToContainerMap(ec.ctx, ec.apiClient)
+	reply := message.PodListResponse{
+		NodeID: ec.nodeId,
+		Pods:   []string{},
+	}
+	for name, _ := range podList {
+		reply.Pods = append(reply.Pods, name)
 	}
 	return *message.NewRespByMessage(msg, reply)
 }
@@ -111,8 +123,6 @@ func (ec *EdgeController) handlePodOp(msg message.Message) {
 		ec.wsclient.SendMsg(resp)
 		break
 	case message.QueryOperation:
-		resp := ec.podStatus(&msg)
-		ec.wsclient.SendMsg(resp)
 		break
 	case message.UpdateOperation:
 		break
@@ -139,13 +149,20 @@ func (ec *EdgeController) MessageHandler() {
 		case message.ResourceTypePod:
 			ec.handlePodOp(msg)
 			break
+		case message.ResourceTypePodStatus:
+			resp := ec.podStatus(&msg)
+			ec.wsclient.SendMsg(resp)
+			break
 		case message.ResourceTypeNode:
 			ec.handleNodeOp(msg)
 			break
 		case message.ResourceTypeNodeStatus:
 			break
 		case message.ResourceTypePodlist:
+			resp := ec.podList(&msg)
+			ec.wsclient.SendMsg(resp)
 			break
+
 		}
 	}
 }

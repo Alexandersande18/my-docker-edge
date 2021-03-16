@@ -5,6 +5,7 @@ import (
 	"dockerapigo/src/common/config"
 	"dockerapigo/src/common/message"
 	"dockerapigo/src/common/types"
+	"fmt"
 	"log"
 	"sync"
 )
@@ -32,18 +33,34 @@ func (cc *CloudController) AsyncMessageHandler() {
 			cc.CommandHandler(cmd)
 		//Message from nodes
 		case msg := <-cc.hub.AsyncMessage:
-			if msg.GetResource() == message.ResourceTypePod && msg.GetOperation() == message.ResponseOperation {
-				log.Println("Pod Query Reply")
-				reply := message.ReadPodQuiryResponse(&msg)
+			log.Println("Async Message:", msg)
+			if msg.GetResource() == message.ResourceTypePodStatus && msg.GetOperation() == message.ResponseOperation {
+				//log.Println("PodStatus Query Reply")
+				reply := message.ReadPodQueryResponse(&msg)
 				no, _ := cc.Nodes.Load(msg.GetSource())
 				node := no.(*types.Node)
 				log.Println(*node)
 				if pod, ok := node.Pods[reply.PodName]; ok {
 					pod.Info = reply
-					log.Println("Pod Info refresh", pod.ToString())
+					log.Println("Pod Info refresh,", pod.ToString())
+				}
+			} else if msg.GetResource() == message.ResourceTypePodlist && msg.GetOperation() == message.ResponseOperation {
+				reply := message.ReadPodListResponse(&msg)
+				no, _ := cc.Nodes.Load(reply.NodeID)
+				log.Println("PodList Query Reply", reply)
+				node := no.(*types.Node)
+				for _, pod := range reply.Pods {
+					if _, ok := node.Pods[pod]; !ok {
+						node.Pods[pod] = &types.Pod{
+							PodName: pod,
+							NodeID:  node.NodeID,
+							Info:    message.PodQueryResponse{},
+						}
+						log.Println("Pods Refresh", node.Pods)
+					}
 				}
 			}
-			log.Println("Async Message:", msg)
+
 		case n := <-cc.hub.RegisterToHub:
 			if old, loaded := cc.Nodes.LoadOrStore(n.NodeID, &n); loaded {
 				// Node Registered before, so set Status
@@ -80,9 +97,9 @@ func (cc *CloudController) CommandHandler(cmd message.Message) {
 	}
 }
 
-func (cc *CloudController) PodStatusQuiry(groupID string, nodeID string, podID string) {
+func (cc *CloudController) PodStatusQuery(groupID string, nodeID string, podID string) {
 	msg := message.NewMessage(config.MasterID)
-	msg.BuildRouter(config.MasterID, groupID, nodeID, message.ResourceTypePod, message.QueryOperation)
+	msg.BuildRouter(config.MasterID, groupID, nodeID, message.ResourceTypePodStatus, message.QueryOperation)
 	msg.FillBody(message.PodConfig{PodName: podID})
 	msg.SetSync()
 	reply := cc.hub.SendMessageSync(*msg)
@@ -90,13 +107,19 @@ func (cc *CloudController) PodStatusQuiry(groupID string, nodeID string, podID s
 		log.Println("Error Occur", reply.GetContent())
 		return
 	}
-	log.Println(message.ReadPodQuiryResponse(&reply))
+	log.Println(message.ReadPodQueryResponse(&reply))
 }
 
-func (cc *CloudController) AsyncPodStatusQuiry(groupID string, nodeID string, podID string) {
+func (cc *CloudController) AsyncPodStatusQuery(groupID string, nodeID string, podID string) {
 	msg := message.NewMessage(config.MasterID)
-	msg.BuildRouter(config.MasterID, groupID, nodeID, message.ResourceTypePod, message.QueryOperation)
+	msg.BuildRouter(config.MasterID, groupID, nodeID, message.ResourceTypePodStatus, message.QueryOperation)
 	msg.FillBody(message.PodConfig{PodName: podID})
+	cc.hub.SendMessage(*msg)
+}
+
+func (cc *CloudController) AsyncPodListQuery(groupID string, nodeID string) {
+	msg := message.NewMessage(config.MasterID)
+	msg.BuildRouter(config.MasterID, groupID, nodeID, message.ResourceTypePodlist, message.QueryOperation)
 	cc.hub.SendMessage(*msg)
 }
 
@@ -119,17 +142,25 @@ func (cc *CloudController) StartPod(cfg message.PodConfig) {
 		node.Pods[cfg.PodName] = &types.Pod{
 			PodName: cfg.PodName,
 			NodeID:  cfg.Node,
-			Info:    message.PodQuiryResponse{},
+			Info:    message.PodQueryResponse{},
 		}
 	}
 }
 
-func (cc *CloudController) NodeStatusQuiry(nodeID string) {
+func (cc *CloudController) NodeStatusQuery(nodeID string) {
 	if nd, ok := cc.Nodes.Load(nodeID); ok {
-		log.Println(nd.(*types.Node).ToString())
+		fmt.Println(nd.(*types.Node).ToString())
 	} else {
-		log.Println(nodeID + "Does not exist")
+		log.Println(nodeID + " Does not exist")
 	}
+}
+
+func (cc *CloudController) NodeList() {
+	cc.Nodes.Range(func(key, value interface{}) bool {
+		fmt.Printf("-------Nodes-------\n%s\n", value.(*types.Node).ToString())
+		fmt.Println()
+		return true
+	})
 }
 
 func (cc *CloudController) NewService(cfg message.Service) {

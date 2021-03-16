@@ -13,7 +13,7 @@ const (
 type Pod struct {
 	PodName string
 	NodeID  string
-	Info    message.PodQuiryResponse
+	Info    message.PodQueryResponse
 }
 
 type Node struct {

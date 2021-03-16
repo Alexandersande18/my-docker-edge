@@ -6,7 +6,7 @@ import (
 )
 
 func TestJson(t *testing.T) {
-	log.Println(GetConfig("test.json"))
+	log.Println(GetConfig("1.json"))
 }
 
 func TestCli(t *testing.T) {

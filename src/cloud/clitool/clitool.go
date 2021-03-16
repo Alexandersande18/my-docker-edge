@@ -14,14 +14,14 @@ var (
 	cc                 *cloudcontroller.CloudController
 )
 
-func handleServiceOptions(cfg message.ConfigFile) {
+func handleServiceDeploy(cfg message.ConfigFile) {
 	for _, service := range cfg.Services {
 		log.Println("cli new service")
 		cc.NewService(service)
 	}
 }
 
-func handlePodOptions(cfg message.ConfigFile) {
+func handlePodDeploy(cfg message.ConfigFile) {
 	for _, podcfg := range cfg.PodCfgs {
 		log.Println("Starting pod", podcfg)
 		cc.StartPod(podcfg)
@@ -31,13 +31,27 @@ func handlePodOptions(cfg message.ConfigFile) {
 }
 
 func nodeStatus(node string) {
-
+	cc.NodeStatusQuery(node)
 }
 
 func podStatus(pod string) {
-	sep := strings.Split(pod, "-")
-	//cc.PodStatusQuiry(sep[0], sep[1], sep[2])
-	cc.AsyncPodStatusQuiry(sep[0], sep[1], sep[2])
+	sep := strings.Split(pod, ":")
+	if len(sep) != 3 {
+		fmt.Println("Usage: status pod <group>:<node>:<pod>")
+	}
+	cc.AsyncPodStatusQuery(sep[0], sep[1], sep[2])
+}
+
+func podList(pod string) {
+	sep := strings.Split(pod, ":")
+	if len(sep) != 2 {
+		fmt.Println("Usage: list pod <group>:<node>")
+	}
+	cc.AsyncPodListQuery(sep[0], sep[1])
+}
+
+func nodeList() {
+	cc.NodeList()
 }
 
 func RunCli() {
@@ -53,8 +67,8 @@ func RunCli() {
 		case "apply":
 			if n == 3 && tag == "-f" {
 				cfg := GetConfig(file)
-				handleServiceOptions(cfg)
-				handlePodOptions(cfg)
+				handleServiceDeploy(cfg)
+				handlePodDeploy(cfg)
 			}
 			break
 		case "status":
@@ -66,9 +80,9 @@ func RunCli() {
 			break
 		case "list":
 			if tag == "node" {
-				nodeStatus(file)
+				nodeList()
 			} else if tag == "pod" {
-				podStatus(file)
+				podList(file)
 			}
 		}
 	}

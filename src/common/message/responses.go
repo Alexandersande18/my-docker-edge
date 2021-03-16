@@ -7,11 +7,16 @@ type PodCreateResponse struct {
 	Success bool   `json:"success"`
 }
 
-type PodQuiryResponse struct {
+type PodQueryResponse struct {
 	PodName string `json:"pod_name"`
 	Status  string `json:"status"`
 	Image   string `json:"image"`
 	PortMap string `json:"port_map"`
+}
+
+type PodListResponse struct {
+	NodeID string   `json:"node_id"`
+	Pods   []string `json:"pods"`
 }
 
 type ErrorResponse struct {
@@ -26,10 +31,18 @@ func ReadPodCreateResponse(message *Message) PodCreateResponse {
 	return res
 }
 
-func ReadPodQuiryResponse(message *Message) PodQuiryResponse {
+func ReadPodQueryResponse(message *Message) PodQueryResponse {
 	configMap := message.GetContent()
 	jsonString, _ := json.Marshal(configMap)
-	res := PodQuiryResponse{}
+	res := PodQueryResponse{}
+	json.Unmarshal(jsonString, &res)
+	return res
+}
+
+func ReadPodListResponse(message *Message) PodListResponse {
+	configMap := message.GetContent()
+	jsonString, _ := json.Marshal(configMap)
+	res := PodListResponse{}
 	json.Unmarshal(jsonString, &res)
 	return res
 }

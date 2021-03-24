@@ -67,6 +67,9 @@ func (cc *CloudController) AsyncMessageHandler() {
 				node := old.(*types.Node)
 				node.Status = n.Status
 				log.Println("Node", *node, "Status Changed")
+				if node.Status == types.NodeStatusAlive {
+					cc.NodeStatusQuery(node.NodeID)
+				}
 			} else {
 				log.Println("New Node", n)
 			}
@@ -132,7 +135,7 @@ func (cc *CloudController) StartPod(cfg message.PodConfig) {
 		}
 		msg := message.NewMessage(config.MasterID)
 		msg.BuildRouter(config.MasterID, cfg.Group, cfg.Node, message.ResourceTypePod, message.InsertOperation)
-		cfg.HostsCfg = cc.GetServiceString()
+		cfg.HostsCfg = cc.makeServiceString(cfg.EnvCfg)
 		log.Println("Host config:", cfg.HostsCfg)
 		msg.SetSync()
 		msg.FillBody(cfg)
@@ -144,11 +147,14 @@ func (cc *CloudController) StartPod(cfg message.PodConfig) {
 			NodeID:  cfg.Node,
 			Info:    message.PodQueryResponse{},
 		}
+	} else {
+		log.Println("Node", cfg.Node, "does not exist!")
 	}
 }
 
 func (cc *CloudController) NodeStatusQuery(nodeID string) {
 	if nd, ok := cc.Nodes.Load(nodeID); ok {
+		cc.AsyncPodListQuery("0", nodeID)
 		fmt.Println(nd.(*types.Node).ToString())
 	} else {
 		log.Println(nodeID + " Does not exist")
@@ -163,6 +169,17 @@ func (cc *CloudController) NodeList() {
 	})
 }
 
+func (cc *CloudController) makeServiceString(envVars []message.EnvVar) []string {
+	var serviceString []string
+	for _, env := range envVars {
+		if env.Type == "service" {
+			service, _ := cc.Services.Load(env.Value)
+			serviceString = append(serviceString, env.Value+":"+service.(message.Service).LocalIP)
+		}
+	}
+	return serviceString
+}
+
 func (cc *CloudController) NewService(cfg message.Service) {
 	if no, ok := cc.Nodes.Load(cfg.Node); ok {
 		ip := no.(*types.Node).LocalIP
@@ -170,18 +187,6 @@ func (cc *CloudController) NewService(cfg message.Service) {
 	}
 	cc.Services.Store(cfg.Name, cfg)
 	log.Println("New Service:", cfg)
-}
-
-func (cc *CloudController) GetServiceString() []string {
-	var res []string
-	cc.Services.Range(func(key, value interface{}) bool {
-		ret := ""
-		s := value.(message.Service)
-		ret = ret + s.Name + ":" + s.LocalIP
-		res = append(res, ret)
-		return true
-	})
-	return res
 }
 
 func (cc *CloudController) RunController() {

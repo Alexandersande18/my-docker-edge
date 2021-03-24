@@ -11,7 +11,7 @@ type PodConfig struct {
 	ImageName string   `json:"image_name"`
 	PortsMap  []string `json:"ports_map"`
 	MountsMap []string `json:"mounts_map"`
-	EnvCfg    []string `json:"env"`
+	EnvCfg    []EnvVar `json:"env"`
 	HostsCfg  []string `json:"hosts_cfg,omitempty"`
 }
 
@@ -34,7 +34,13 @@ type Service struct {
 	LocalIP  string `json:"local_ip"`
 }
 
-func NewPodConfigMap(podname string, imagename string, portsmap []string, mountsmap []string, envcfg []string) *PodConfig {
+type EnvVar struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+	Type  string `json:"type,omitempty"`
+}
+
+func NewPodConfigMap(podname string, imagename string, portsmap []string, mountsmap []string, envcfg []EnvVar) *PodConfig {
 	return &PodConfig{
 		PodName:   podname,
 		ImageName: imagename,

@@ -9,8 +9,8 @@
         "27017:27017"
       ],
       "env": [
-        "MONGO_INITDB_ROOT_USERNAME=root",
-        "MONGO_INITDB_ROOT_PASSWORD=123"
+        {"name": "MONGO_INITDB_ROOT_USERNAME", "value": "root"},
+        {"name": "MONGO_INITDB_ROOT_PASSWORD", "value": "123"}
       ]
     },
     {
@@ -22,9 +22,9 @@
         "8081:8081"
       ],
       "env": [
-        "ME_CONFIG_MONGODB_ADMINUSERNAME=root",
-        "ME_CONFIG_MONGODB_ADMINPASSWORD=123",
-        "ME_CONFIG_MONGODB_SERVER=mongo"
+        {"name": "ME_CONFIG_MONGODB_ADMINUSERNAME", "value": "root"},
+        {"name": "ME_CONFIG_MONGODB_ADMINPASSWORD", "value": "123"},
+        {"name": "ME_CONFIG_MONGODB_SERVER", "value": "mongo", "type": "service"}
       ]
     }
   ],

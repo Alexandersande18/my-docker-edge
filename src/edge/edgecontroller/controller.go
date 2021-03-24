@@ -59,10 +59,18 @@ func (ec *EdgeController) Run() {
 	w1.Wait()
 }
 
+func makeEnvVariableString(envVars []message.EnvVar) []string {
+	var envString []string
+	for _, env := range envVars {
+		envString = append(envString, env.Name+"="+env.Value)
+	}
+	return envString
+}
+
 func (ec *EdgeController) podCreate(msg *message.Message) message.Message {
 	configMap := message.ReadPodConfigMap(msg)
 	cid, err := api.RunCbyName(ec.ctx, ec.apiClient, configMap.ImageName, configMap.PodName, configMap.PortsMap,
-		configMap.MountsMap, configMap.EnvCfg, configMap.HostsCfg)
+		configMap.MountsMap, makeEnvVariableString(configMap.EnvCfg), configMap.HostsCfg)
 	if err != nil {
 		log.Println(err)
 	}

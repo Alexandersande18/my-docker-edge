@@ -72,6 +72,7 @@ func (cc *CloudController) AsyncMessageHandler() {
 				}
 			} else {
 				log.Println("New Node", n)
+				cc.NodeStatusQuery(n.NodeID)
 			}
 		}
 	}
@@ -137,7 +138,6 @@ func (cc *CloudController) StartPod(cfg message.PodConfig) {
 		msg.BuildRouter(config.MasterID, cfg.Group, cfg.Node, message.ResourceTypePod, message.InsertOperation)
 		cfg.HostsCfg = cc.makeServiceString(cfg.EnvCfg)
 		log.Println("Host config:", cfg.HostsCfg)
-		msg.SetSync()
 		msg.FillBody(cfg)
 		reply := cc.hub.SendMessageSync(*msg)
 		response := message.ReadPodCreateResponse(&reply)
@@ -149,6 +149,34 @@ func (cc *CloudController) StartPod(cfg message.PodConfig) {
 		}
 	} else {
 		log.Println("Node", cfg.Node, "does not exist!")
+	}
+}
+
+func (cc *CloudController) PodUpdate(cfg message.PodConfig) {
+	if no, nodeExist := cc.Nodes.Load(cfg.Node); nodeExist {
+		node := no.(*types.Node)
+		if _, podExist := node.Pods[cfg.PodName]; podExist {
+
+		} else {
+			log.Println("Pod", cfg.PodName, "does not exist!")
+		}
+	} else {
+		log.Println("Node", cfg.Node, "does not exist!")
+	}
+}
+
+func (cc *CloudController) PodRemove(groupID, nodeID, podID string) {
+	if no, nodeExist := cc.Nodes.Load(nodeID); nodeExist {
+		node := no.(*types.Node)
+		delete(node.Pods, podID)
+		msg := message.NewMessage(config.MasterID)
+		msg.SetRoute(config.MasterID, groupID, nodeID).SetResourceOperation(message.ResourceTypePod, message.DeleteOperation)
+		msg.FillBody(podID)
+		reply := cc.hub.SendMessageSync(*msg)
+		a := reply.GetContentRaw().(string)
+		log.Println("Pod remove reply", a)
+	} else {
+		log.Println("Node", nodeID, "does not exist!")
 	}
 }
 

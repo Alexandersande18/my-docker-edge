@@ -74,7 +74,7 @@ func (h *Hub) MessageHandler() {
 				h.syncMsgArrival(msg.GetID(), message.NewClientOfflineErrMessage(msg.GetID()))
 			}
 		case msg := <-h.messageReceived:
-			log.Println("CloudHub Received: ", msg.GetContent())
+			log.Println("CloudHub Received: ", msg.GetContentRaw())
 			if msg.IsSync() {
 				h.syncMsgArrival(msg.GetParentID(), &msg)
 			} else {
@@ -150,6 +150,7 @@ func (h *Hub) SendMessage(msg message.Message) {
 
 func (h *Hub) SendMessageSync(msg message.Message) message.Message {
 	ID := msg.GetID()
+	msg.SetSync()
 	h.syncMessage.Store(ID, nil)
 	h.messageToSend <- msg
 	return h.syncMsgPolling(ID)

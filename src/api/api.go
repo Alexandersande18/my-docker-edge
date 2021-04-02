@@ -141,15 +141,16 @@ func StopCbyName(ctx context.Context, cli *client.Client, containerName string) 
 	return ctnr.ID, nil
 }
 
-func removeC(ctx context.Context, cli *client.Client, containerID string) {
+func RemoveC(ctx context.Context, cli *client.Client, containerID string) error {
 	var err = cli.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{
-		RemoveLinks:   true,
-		RemoveVolumes: true,
+		RemoveLinks:   false,
+		RemoveVolumes: false,
 		Force:         true,
 	})
 	if err != nil {
 		logger(err)
 	}
+	return err
 }
 
 func ConfigPorts(cfg *container.Config, hostCfg *container.HostConfig, portsM []string) {

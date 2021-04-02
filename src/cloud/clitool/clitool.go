@@ -38,6 +38,7 @@ func podStatus(pod string) {
 	sep := strings.Split(pod, ":")
 	if len(sep) != 3 {
 		fmt.Println("Usage: status pod <group>:<node>:<pod>")
+		return
 	}
 	cc.AsyncPodStatusQuery(sep[0], sep[1], sep[2])
 }
@@ -46,8 +47,18 @@ func podList(pod string) {
 	sep := strings.Split(pod, ":")
 	if len(sep) != 2 {
 		fmt.Println("Usage: list pod <group>:<node>")
+		return
 	}
 	cc.AsyncPodListQuery(sep[0], sep[1])
+}
+
+func handlePodRm(pod string) {
+	sep := strings.Split(pod, ":")
+	if len(sep) != 2 {
+		fmt.Println("Usage: rm pod <node>:<pod>")
+		return
+	}
+	cc.PodRemove("0", sep[0], sep[1])
 }
 
 func nodeList() {
@@ -83,6 +94,10 @@ func RunCli() {
 				nodeList()
 			} else if tag == "pod" {
 				podList(file)
+			}
+		case "rm":
+			if tag == "pod" {
+				handlePodRm(file)
 			}
 		}
 	}

@@ -91,6 +91,20 @@ func (ec *EdgeController) podStop(msg *message.Message) message.Message {
 	return *message.NewRespByMessage(msg, res)
 }
 
+func (ec *EdgeController) podStopAndRemove(msg *message.Message) message.Message {
+	podName := msg.GetContentRaw().(string)
+	res, err := api.StopCbyName(ec.ctx, ec.apiClient, podName)
+	if err != nil {
+		log.Println(err)
+		res = ""
+	}
+	err = api.RemoveC(ec.ctx, ec.apiClient, res)
+	if err != nil {
+		log.Println(err)
+	}
+	return *message.NewRespByMessage(msg, res)
+}
+
 func (ec *EdgeController) podStatus(msg *message.Message) message.Message {
 	configMap := message.ReadPodConfigMap(msg)
 	res, err := api.GetContainerStatus(ec.ctx, ec.apiClient, configMap.PodName)
@@ -127,10 +141,8 @@ func (ec *EdgeController) handlePodOp(msg message.Message) {
 		ec.wsclient.SendMsg(resp)
 		break
 	case message.DeleteOperation:
-		resp := ec.podStop(&msg)
+		resp := ec.podStopAndRemove(&msg)
 		ec.wsclient.SendMsg(resp)
-		break
-	case message.QueryOperation:
 		break
 	case message.UpdateOperation:
 		break

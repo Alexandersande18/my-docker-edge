@@ -1,11 +1,22 @@
 package cloudcontroller
 
 import (
+	"log"
 	"testing"
+	"time"
 )
 
+var cc *CloudController
+
+func lbActivate() {
+	for {
+		time.Sleep(3 * time.Second)
+		log.Println(getNextNode(&cc.Nodes))
+	}
+}
+
 func TestController(t *testing.T) {
-	cc := NewCloudController()
+	cc = NewCloudController()
 	//n := node.Node{
 	//	NodeID:  "c01",
 	//	LocalIP: "192.168.116.12",

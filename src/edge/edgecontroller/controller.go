@@ -112,11 +112,13 @@ func (ec *EdgeController) podStatus(msg *message.Message) message.Message {
 		log.Println(err)
 		return *message.NewErrorMessage(msg, err.Error())
 	}
+
 	reply := message.PodQueryResponse{
 		Status:  res.State.Status,
-		Image:   res.Image,
+		Image:   res.Config.Image,
 		PortMap: api.GetPortMapString(res.HostConfig.PortBindings),
 		PodName: configMap.PodName,
+		ID:      res.ID,
 	}
 	return *message.NewRespByMessage(msg, reply)
 }

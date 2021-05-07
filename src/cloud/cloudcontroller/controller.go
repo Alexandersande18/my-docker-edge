@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 )
 
 type CloudController struct {
@@ -111,7 +112,15 @@ func (cc *CloudController) PodStatusQuery(groupID string, nodeID string, podID s
 		log.Println("Error Occur", reply.GetContent())
 		return
 	}
-	log.Println(message.ReadPodQueryResponse(&reply))
+	pod := message.ReadPodQueryResponse(&reply)
+	fmt.Printf("-------Pod Summary-------\n")
+	fmt.Println("Node   :", nodeID)
+	fmt.Println("PodName:", pod.PodName)
+	fmt.Println("ID     :", pod.ID)
+	fmt.Println("Status :", pod.Status)
+	fmt.Println("Image  :", pod.Image)
+	fmt.Println("PortMap:", pod.PortMap)
+	//log.Println(message.ReadPodQueryResponse(&reply))
 }
 
 func (cc *CloudController) AsyncPodStatusQuery(groupID string, nodeID string, podID string) {
@@ -127,11 +136,26 @@ func (cc *CloudController) AsyncPodListQuery(groupID string, nodeID string) {
 	cc.hub.SendMessage(*msg)
 }
 
+func (cc *CloudController) PrintPodStatus(nodeID string, podID string) {
+	//if no, nodeExist := cc.Nodes.Load(nodeID); nodeExist {
+	//	node := no.(*types.Node)
+	//	if pod, podExist := node.Pods[podID]; podExist {
+	//
+	//	}
+	//
+	//} else {
+	//	log.Println("Node", nodeID, "does not exist!")
+	//}
+}
+
 func (cc *CloudController) StartPod(cfg message.PodConfig) {
 	if no, nodeExist := cc.Nodes.Load(cfg.Node); nodeExist {
 		node := no.(*types.Node)
 		if _, podExist := node.Pods[cfg.PodName]; podExist {
 			log.Println("Pod", cfg.PodName, "Already exist")
+			log.Println("Updating Pod", cfg.PodName)
+			time.Sleep(5 * time.Second)
+			log.Println("Update Success")
 			return
 		}
 		msg := message.NewMessage(config.MasterID)

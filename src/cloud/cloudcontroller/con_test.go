@@ -17,6 +17,7 @@ func lbActivate() {
 
 func TestController(t *testing.T) {
 	cc = NewCloudController()
+	go lbActivate()
 	//n := node.Node{
 	//	NodeID:  "c01",
 	//	LocalIP: "192.168.116.12",

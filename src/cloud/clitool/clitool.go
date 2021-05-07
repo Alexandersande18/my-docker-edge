@@ -40,7 +40,8 @@ func podStatus(pod string) {
 		fmt.Println("Usage: status pod <group>:<node>:<pod>")
 		return
 	}
-	cc.AsyncPodStatusQuery(sep[0], sep[1], sep[2])
+	//cc.AsyncPodStatusQuery(sep[0], sep[1], sep[2])
+	cc.PodStatusQuery(sep[0], sep[1], sep[2])
 }
 
 func podList(pod string) {

@@ -12,6 +12,7 @@ type PodQueryResponse struct {
 	Status  string `json:"status"`
 	Image   string `json:"image"`
 	PortMap string `json:"port_map"`
+	ID      string `json:"id"`
 }
 
 type PodListResponse struct {

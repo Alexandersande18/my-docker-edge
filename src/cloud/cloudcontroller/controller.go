@@ -7,6 +7,7 @@ import (
 	"dockerapigo/src/common/types"
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 	"time"
 )
@@ -199,6 +200,7 @@ func (cc *CloudController) PodRemove(groupID, nodeID, podID string) {
 		reply := cc.hub.SendMessageSync(*msg)
 		a := reply.GetContentRaw().(string)
 		log.Println("Pod remove reply", a)
+		log.Println("Pod remove success")
 	} else {
 		log.Println("Node", nodeID, "does not exist!")
 	}
@@ -225,8 +227,8 @@ func (cc *CloudController) makeServiceString(envVars []message.EnvVar) []string 
 	var serviceString []string
 	for _, env := range envVars {
 		if env.Type == "service" {
-			service, _ := cc.Services.Load(env.Value)
-			serviceString = append(serviceString, env.Value+":"+service.(message.Service).LocalIP)
+			service, _ := cc.Services.Load(strings.Split(env.Value, ":")[0])
+			serviceString = append(serviceString, strings.Split(env.Value, ":")[0]+":"+service.(message.Service).LocalIP)
 		}
 	}
 	return serviceString

@@ -1,0 +1,44 @@
+{
+  "pods" :[
+    {
+      "node": "n01",
+      "group" : "0",
+      "pod_name": "mysql-db",
+      "image_name": "mysql:5.7",
+      "ports_map": [
+        "3306:3306"
+      ],
+      "env": [
+        {"name": "MYSQL_DATABASE", "value": "wdb"},
+        {"name": "MYSQL_USER", "value": "alex"},
+        {"name": "MYSQL_PASSWORD", "value": "114514"},
+        {"name": "MYSQL_RANDOM_ROOT_PASSWORD", "value": "'1'"}
+      ]
+    },
+    {
+      "node": "n01",
+      "group" : "0",
+      "pod_name": "wordpress",
+      "image_name": "wordpress",
+      "ports_map": [
+        "8080:80"
+      ],
+      "env": [
+        {"name": "WORDPRESS_DB_HOST", "value": "database:3306", "type": "service"},
+        {"name": "WORDPRESS_DB_USER", "value": "alex"},
+        {"name": "WORDPRESS_DB_PASSWORD", "value": "114514"},
+        {"name": "WORDPRESS_DB_NAME", "value": "wdb"}
+      ]
+    }
+  ],
+  "services" : [
+    {
+      "group" : "0",
+      "name": "database",
+      "node": "n01",
+      "pod": "mysql-db",
+      "protocol": "tcp",
+      "port": "3306"
+    }
+  ]
+}
